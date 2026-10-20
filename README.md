@@ -76,6 +76,37 @@ References (official):
 - https://developers.uniswap.org/docs/protocols/permit2/concepts/signature-transfer
 - https://eips.ethereum.org/EIPS/eip-681
 
+## Compare intended $50 Base Circle USDC spending with approval scope
+
+A genuine r/defi October 2026 user asked why a $50 swap might trigger
+unlimited token permission and why revoking later also costs gas. SignScope
+already decoded ERC-20 approve and EIP-712 Permit2, so the existing product
+now supports a new OPTIONAL, LOCAL user-entered intended-spend comparison.
+
+The ERC-20 approve built-in FICTIONAL example asks MAX_UINT256; compare it
+against a hypothetical 50 native Base Circle USDC. The report shows token,
+spender, amount and an UNLIMITED_APPROVAL_FOR_LIMITED_INTENT warning.
+Only Base chain8453, native Circle USDC contract
+0x833589fCD6eDb6E08f4C7C32D4f71b54bdA02913, 6 decimals is supported.
+Exact decimal parsing uses BigInt, never IEEE floating point. Recognized
+approval families: ERC20 approve, EIP-2612 Permit, and Permit2 one-token
+PermitSingle. Wrong chain, USDbC, unknown token/decimals, Permit2
+SignatureTransfer, or unknown permissions are NOT guessed.
+
+IMPORTANT: This computes against UNSIGNED, UNAUTHENTICATED user-supplied bytes,
+NOT any existing onchain token allowance. It never requests wallet/RPC
+connections, contract state, funds, signature, approvals, swap or revocation.
+A one-to-one approval matching intended spend is STILL NOT safe-to-sign
+certification; spender/code authenticity and previous permissions stay
+unknown. Actual revocations require a separate authenticated wallet tool
+and may cost gas. Never paste signatures, seeds, private keys or confidential
+account statements. No calculated inputs are transmitted to a server.
+
+References: https://eips.ethereum.org/EIPS/eip-20 and
+https://www.circle.com/blog/usdc-now-available-natively-on-base .
+The public user's question is an observed demand signal, not evidence they
+used or paid for this product. Current $15 SignScope marketplace orders 0.
+
 ## Honest business and feedback workflow
 
 This free tool is not proof that there are real users, favorable reviews or

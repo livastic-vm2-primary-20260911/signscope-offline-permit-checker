@@ -41,8 +41,9 @@ test("built-in fifth sample is wired to a visible page control",()=>{
  assert.ok(src.includes('"sample-signature-transfer":"Permit2 SignatureTransfer"'));
 });
 test("browser bundle and analyzer import have matching cache-version pins",()=>{
- assert.ok(html.includes("src/app.mjs?v=20261020-sigtransfer"));
+ assert.ok(html.includes("src/app.mjs?v=20261020-intended-base-usdc-spend"));
  assert.ok(src.includes('from "./analysis.mjs?v=20261020-sigtransfer";'));
+ assert.ok(src.includes('from "./intent-compare.mjs";'));
 });
 test("fifth sample never requests a real wallet or produces a signature",()=>{
  assert.equal(data.walletConnected,false);

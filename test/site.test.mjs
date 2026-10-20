@@ -29,7 +29,7 @@ test("page CSP forbids every external connection",()=>{
 });
 test("only one local script module and stylesheet",()=>{
   const scripts=[...h.matchAll(/<script\b[^>]*src="([^"]+)"/g)].map(m=>m[1]);
-  assert.deepEqual(scripts,["./src/app.mjs?v=20261020-sigtransfer"]);
+  assert.deepEqual(scripts,["./src/app.mjs?v=20261020-intended-base-usdc-spend"]);
   assert.ok(h.includes('href="./style.css"'));
 });
 test("UI never invokes provider or wallet signing",()=>{

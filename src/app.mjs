@@ -2,6 +2,7 @@ import {
   inspect, BASE_USDC, PERMIT2, MAX160,
   SAMPLE_PERMIT, SAMPLE_APPROVE, SAMPLE_SIGNATURE_TRANSFER
 } from "./analysis.mjs?v=20261020-sigtransfer";
+import {compareUnsignedApprovalIntent} from "./intent-compare.mjs";
 
 const $ = id => document.getElementById(id);
 const input=$("input-json");
@@ -106,6 +107,8 @@ function render(obj){
   addDetail("Signer/owner",observed.owner);
   addDetail("Spender",observed.spender);
   addDetail("Recipient",observed.recipient);
+  addDetail("Intended spend on Base (Circle USDC)",observed.intendedSpendBaseCircleUsdc);
+  addDetail("Approval / intended amount",observed.approvalToIntendedRatio);
   if(Array.isArray(observed.amounts)){
     observed.amounts.slice(0,20).forEach((a,index)=>{
       addDetail("Amount "+(index+1),a.display+" · "+a.atomic+" atomic units");
@@ -142,6 +145,8 @@ function render(obj){
 }
 const selectSample=(id)=>{
   input.value=samples[id]||"";
+  // The sample is FICTIONAL; $50 is a user-supplied hypothetical context.
+  $("intended-spend").value=id==="sample-calldata"?"50":"";
   for(const [key] of Object.entries(sampleNames)){
     $(key).classList.toggle("active",key===id);
   }
@@ -159,18 +164,21 @@ $("inspect").addEventListener("click",()=>{
       expectedSpender:$("expected-spender").value.trim(),
       expectedContract:$("expected-contract").value.trim()
     });
-    render(result);
+    render(compareUnsignedApprovalIntent(result,$("intended-spend").value.trim()));
   }catch(e){
     clearResult();
     setStatus("Input could not be inspected: "+String(e?.message||e).slice(0,260)+". Do not interpret an error as permission to sign.","warning");
   }
 });
 $("clear").addEventListener("click",()=>{
-  input.value="";$("expected-spender").value="";$("expected-contract").value="";
+  input.value="";$("expected-spender").value="";$("expected-contract").value="";$("intended-spend").value="";
   clearResult();setStatus("Cleared local input. No data was uploaded.");
 });
 input.addEventListener("input",()=>{
   if(report){clearResult();setStatus("Input changed. Analyze again; previous receipt no longer describes the editor.");}
+});
+$("intended-spend").addEventListener("input",()=>{
+  if(report){clearResult();setStatus("Your intended spend changed. Inspect again; previous scope receipt is stale.");}
 });
 $("download").addEventListener("click",()=>{
   if(!report)return;

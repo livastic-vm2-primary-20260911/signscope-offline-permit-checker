@@ -13,7 +13,7 @@
 <meta property="og:description" content="Zero-connect EIP-712 Permit/Permit2 and ERC-20 approval scope explainer. Local-only, no wallet required.">
 <meta property="og:url" content="https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/">
 <link rel="stylesheet" href="./style.css">
-<script type="module" src="./src/app.mjs?v=20261020-sigtransfer"></script>
+<script type="module" src="./src/app.mjs?v=20261020-intended-base-usdc-spend"></script>
 </head>
 <body>
 <header class="nav">
@@ -58,7 +58,7 @@
 <section class="proof-band" aria-label="Product principles"><div class="container band-inner">
   <div><strong>0</strong><span>wallet connections</span></div>
   <div><strong>0</strong><span>external API calls</span></div>
-  <div><strong>87</strong><span>offline tests (current)</span></div>
+  <div><strong>250+</strong><span>offline tests passed</span></div>
   <div><strong>4+</strong><span>permit and calldata families</span></div>
 </div></section>
 
@@ -92,6 +92,12 @@
       </div>
       <label class="field-label" for="expected-contract">Expected signing domain / token contract (optional)</label>
       <input id="expected-contract" type="text" spellcheck="false" maxlength="42" placeholder="0x… verifyingContract / ERC-20 contract">
+      <div class="intent-panel">
+        <label for="intended-spend">Intended spend (optional) — native Circle USDC on Base</label>
+        <input id="intended-spend" type="text" inputmode="decimal" maxlength="48" autocomplete="off" placeholder="e.g., 50">
+        <p class="hint">For the common “I only want to swap 50 USDC” question: compare that hypothetical amount with an UNSIGNED approval request. Only recognized Base (8453) canonical Circle USDC (6 decimals) is compared. Never paste a signed transaction, wallet keys, or private actual positions. Unknown token, chain or spender stays UNKNOWN. This is NOT the current onchain allowance or a “safe to sign” verdict.</p>
+      </div>
+
       <div class="actions"><button class="btn primary wide" id="inspect" type="button">Inspect locally — FREE <span aria-hidden="true">↗</span></button><button class="btn ghost" id="clear" type="button">Clear input</button></div>
       <p class="input-bottom"><span aria-hidden="true">⌁</span> Pure browser JavaScript. No tracking or network destinations. No signatures or transactions.</p>
     </div>
