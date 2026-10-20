@@ -48,6 +48,19 @@ paying customers. There is a public GitHub user-feedback issue form, and
 a user-initiated mailto feedback draft. Users can choose from nonbinding
 willingness-to-pay options; feedback is not created automatically.
 
+An additional **optional no-login feedback route** lives at
+https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/feedback/.
+The main wallet-free analyzer still has connect-src none / form-action none
+and never loads the provider. Only the separate human-feedback route includes
+a browser-native POST form to the single existing legal owner's verified
+FormSubmit inbox. No external scripts or tracking are used; the default
+human-consent checkbox is unchecked and required. The optional one-line
+example is limited to 260 characters and strictly asks for fictional/general
+content. Any FormSubmit CAPTCHA remains enforced. The redirect
+/feedback/thanks/ is noindex and cannot attest provider delivery, ownership,
+contract formation or actual user participation. We do not submit test
+feedback ourselves and never count page visits as independent user demand.
+
 Optional direct support: users can send native Circle USDC on Base via their
 own wallet to the same single human beneficial owner's already-published
 VM5 merchant recipient address. The static ERC-681 1 USDC request is a

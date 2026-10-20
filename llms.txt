@@ -13,3 +13,12 @@ public same-owner VM5 recipient, not a subscription or proof of customer revenue
 Separate scoped 15 USDC technical review is a PROPOSAL, only by written agreement.
 One original economic owner across VM1,VM2,VM3,VM5. No external paid users proven.
 Never paste signed messages, seeds, secrets or keys. No investment or yield advice.
+
+Optional no-login privacy-disclosed human research form:
+https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/feedback/
+The main free checker never fetches or embeds FormSubmit. Only optional
+explicit checkbox consent and manual submit on the separate feedback page
+send small nonsecret chosen answers to the independent form provider.
+Never submit signed messages, addresses, wallets, keys, secrets or holdings.
+A redirected thanks page is not proof the owner received a response.
+No actual independent humans, purchases or paid contracts are claimed.
