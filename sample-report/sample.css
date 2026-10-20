@@ -1,0 +1,27 @@
+.report-header{padding:76px 0 52px;max-width:1030px}
+.report-header h1{font-size:clamp(2.4rem,5.5vw,4.7rem)}
+.report-header .lead{max-width:900px}
+.report-header .actions-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:27px}
+.report-badge{display:flex;gap:18px;padding:22px 27px;margin:4px 0 27px;background:#fff0df;border:1px solid #eac79d;border-radius:15px;color:#614624}
+.report-badge p{margin:5px 0 0;color:#745c3d;font-size:.88rem}
+.badge-symbol{flex:none;width:38px;height:38px;display:grid;place-items:center;background:#ffe1ae;border-radius:10px;font-weight:900}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.report-card{background:white;border:1px solid #d9dce4;border-radius:16px;padding:30px}
+.label{color:#5447ad;text-transform:uppercase;letter-spacing:.12em;font-weight:800;font-size:.69rem}
+.report-card h2,.report-findings h2,.upgrade h2,.repro h2{font-size:2rem;margin:12px 0 24px}
+.report-card dl{margin:0}.report-card dl>div{display:grid;grid-template-columns:152px 1fr;gap:15px;border-bottom:1px solid #e6e8ed;padding:14px 0}.report-card dl>div:last-child{border:0}
+.report-card dt{color:#6d7688;font-size:.8rem}.report-card dd{margin:0;font-size:.85rem;min-width:0;overflow-wrap:anywhere}
+.report-card code{font-family:ui-monospace,Consolas,monospace;font-size:.77rem;color:#37445f;overflow-wrap:anywhere}
+.amount{background:#f0edff;border:1px solid #d6cdfa;border-radius:12px;padding:19px;margin-bottom:17px}
+.amount span{font-size:.8rem;color:#66618c;display:block}.amount strong{color:#4d38a5;font-size:2.15rem;display:block;letter-spacing:-.04em;margin:5px 0}
+.report-findings{padding:60px 0 36px;border-bottom:1px solid #dddfe7}.finding{display:flex;align-items:flex-start;gap:18px;background:#fff;border:1px solid #e3d8bc;border-left:4px solid #e6b653;border-radius:12px;padding:23px;margin:15px 0}
+.flag-num{background:#f9e1b7;color:#805b23;font-weight:850;padding:9px 13px;border-radius:8px}.finding h3{margin:0 0 8px;font-size:1.14rem;letter-spacing:0}
+.finding p{color:#606b7b;font-size:.88rem;margin:0;line-height:1.75}.report-note{font-size:.81rem;color:#857359}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:15px}.checks>div{padding:20px 22px;background:#fff;border:1px solid #e1e3ed;border-radius:12px}
+.checks strong{font-size:.94rem}.checks p{font-size:.85rem;color:#6a7586;line-height:1.75}
+.upgrade{display:grid;grid-template-columns:1.45fr .55fr;gap:35px;align-items:center;margin:70px 0 20px;background:#192646;color:white;border-radius:18px;padding:37px}
+.upgrade .eyebrow{color:#bacdff}.upgrade p{color:#cdd4e3;max-width:800px;font-size:.89rem}.upgrade .micro{color:#abb9d2;font-size:.75rem}
+.purchase-actions{display:grid;gap:12px}.purchase-actions .secondary{background:#fff}.repro{padding:60px 0 90px}.repro h2{margin:13px 0}.repro p{color:#626c80;max-width:850px}
+.repro .links{display:flex;gap:20px;flex-wrap:wrap}
+@media(max-width:870px){.report-grid,.upgrade{grid-template-columns:1fr}.report-card dl>div{grid-template-columns:130px 1fr}.checks{grid-template-columns:1fr}}
+@media(max-width:530px){.report-header{padding:43px 0}.report-card{padding:22px}.report-card dl>div{grid-template-columns:1fr;gap:4px}.upgrade{padding:23px}.report-findings{padding:44px 0}.report-badge{padding:18px}}

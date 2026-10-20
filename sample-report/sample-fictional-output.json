@@ -1,0 +1,140 @@
+{
+  "exampleOnly": true,
+  "sampleType": "FICTIONAL_UNSIGNED_PERMIT2_ALLOWANCE",
+  "generatedAtUtc": "2026-10-20T12:30:00.000Z",
+  "actualCustomer": false,
+  "customerTransaction": false,
+  "commissionedWork": false,
+  "priceChargedBaseCircleUSDC": "0",
+  "underlyingSignerOrWalletAuthenticated": false,
+  "chainQueried": false,
+  "contractBytecodeInspected": false,
+  "reviewer": "AI-assisted static local engine only; neither human audit nor certified security report",
+  "freeService": "https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/",
+  "optionalFixedOffer": "https://clawlancer.ai/marketplace/26905668-717a-41d7-9cc1-5d7ea1c331b1",
+  "input": {
+    "types": {
+      "EIP712Domain": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "name": "verifyingContract",
+          "type": "address"
+        }
+      ],
+      "PermitDetails": [
+        {
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint160"
+        },
+        {
+          "name": "expiration",
+          "type": "uint48"
+        },
+        {
+          "name": "nonce",
+          "type": "uint48"
+        }
+      ],
+      "PermitSingle": [
+        {
+          "name": "details",
+          "type": "PermitDetails"
+        },
+        {
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "name": "sigDeadline",
+          "type": "uint256"
+        }
+      ]
+    },
+    "primaryType": "PermitSingle",
+    "domain": {
+      "name": "Permit2",
+      "chainId": 8453,
+      "verifyingContract": "0x000000000022D473030F116dDEE9F6B43aC78BA3"
+    },
+    "message": {
+      "details": {
+        "token": "0x833589fCD6eDb6E08f4C7C32D4f71b54bdA02913",
+        "amount": "1461501637330902918203684832716283019655932542975",
+        "expiration": "1893456000",
+        "nonce": "4"
+      },
+      "spender": "0x2222222222222222222222222222222222222222",
+      "sigDeadline": "1799999999"
+    }
+  },
+  "output": {
+    "product": "SignScope",
+    "inputKind": "EIP712_UNSIGNED",
+    "unsignedSourceOnly": true,
+    "uploaded": false,
+    "walletConnected": false,
+    "signed": false,
+    "chargedUSDC": "0",
+    "verdict": "REVIEW_REQUIRED_NOT_SAFE_CERTIFICATION",
+    "observed": {
+      "primaryType": "PermitSingle",
+      "domainName": "Permit2",
+      "domainVersion": null,
+      "chainId": 8453,
+      "verifyingContract": "0x000000000022d473030f116ddee9f6b43ac78ba3",
+      "recognized": true,
+      "owner": null,
+      "spender": "0x2222222222222222222222222222222222222222",
+      "recipient": null,
+      "amounts": [
+        {
+          "token": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          "atomic": "1461501637330902918203684832716283019655932542975",
+          "display": "MAX_UINT160 — effectively unlimited if used as an allowance",
+          "maximum": true,
+          "zero": false
+        }
+      ],
+      "deadlines": [
+        {
+          "name": "allowance expiration",
+          "epoch": "1893456000",
+          "daysFromNow": 1168.5
+        },
+        {
+          "name": "signature deadline",
+          "epoch": "1799999999",
+          "daysFromNow": 86.8
+        }
+      ]
+    },
+    "findings": [
+      {
+        "code": "MAXIMUM_ALLOWANCE",
+        "level": "attention",
+        "reason": "Maximum uint value gives a practically unlimited approval."
+      },
+      {
+        "code": "LONG_LIVED",
+        "level": "attention",
+        "reason": "allowance expiration remains usable for over one year."
+      }
+    ],
+    "limitations": [
+      "User-submitted unsigned JSON is not authenticated. No contract bytecode, ledger, nonce state or token decimals fetched.",
+      "Unknown methods/contract logic cannot be simulated or classified reliably.",
+      "Never use this preview as permission to sign, approve, or send tokens."
+    ]
+  }
+}

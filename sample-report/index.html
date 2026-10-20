@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10172a">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="See a fully transparent, fictional example of a Permit2 signature scope analysis: spender, unlimited uint160 approval, domain contract and allowance expiration, with caveats. Free example, no wallet.">
+<meta name="robots" content="index,follow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'self'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<link rel="canonical" href="https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/sample-report/">
+<title>SignScope — Fictional Permit2 Scope Report Example (Free)</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="./sample.css">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="../"><span class="brand-icon" aria-hidden="true">S<span>↗</span></span>Sign<span class="brand-light">Scope</span></a>
+  <nav aria-label="Navigation">
+    <a href="../#analyzer">Free local inspector</a>
+    <a href="../feedback/">Give feedback</a>
+    <a href="https://github.com/livastic-vm2-primary-20260911/signscope-offline-permit-checker" target="_blank" rel="noopener noreferrer">Source ↗</a>
+  </nav>
+</header>
+<main class="container">
+  <section class="report-header">
+    <p class="eyebrow">FICTIONAL EXAMPLE · GENERATED FROM OPEN-SOURCE ENGINE · $0</p>
+    <h1>What would a<br><em>Permit2 scope report</em> actually show?</h1>
+    <p class="lead">This is a <strong>fictional, precomputed sample</strong>, not a paid client's report or a security audit. It uses a deliberately excessive unsigned Permit2 allowance to demonstrate the fields, warning categories, limitations and recommended next checks. You can read it without a wallet, account or payment.</p>
+    <div class="actions-row">
+      <a class="btn primary" href="../#analyzer">Try the free browser-local analyzer ↗</a>
+      <a class="btn secondary" href="./sample-fictional-output.json">View reproducible example JSON ↓</a>
+    </div>
+  </section>
+  <div class="report-badge"><span class="badge-symbol" aria-hidden="true">!</span><div><strong>Not safe-to-sign certification</strong><p>2 static scope warnings shown · no wallet connected · no chain or code review · no spending · no user data submitted.</p></div></div>
+  <div class="report-grid">
+    <article class="report-card">
+      <p class="label">01 / REQUEST IDENTITY</p>
+      <h2>What is declared?</h2>
+      <dl>
+        <div><dt>Struct</dt><dd><code>PermitSingle</code> (EIP-712)</dd></div>
+        <div><dt>Network in message</dt><dd>Base, chainId 8453</dd></div>
+        <div><dt>Domain name</dt><dd><code>Permit2</code></dd></div>
+        <div><dt>Verifying contract</dt><dd><code>0x000000000022D473030F116dDEE9F6B43aC78BA3</code></dd></div>
+        <div><dt>Token address field</dt><dd><code>0x833589fCD6eDb6E08f4C7C32D4f71b54bdA02913</code> (the commonly published Circle USDC Base address; not independently checked onchain by this page)</dd></div>
+        <div><dt>Declared spender</dt><dd><code>0x2222222222222222222222222222222222222222</code> — <strong>invented for the sample</strong></dd></div>
+        <div><dt>Owner</dt><dd>Unknown: an unsigned PermitSingle JSON alone does not recover a signature's actual wallet owner.</dd></div>
+      </dl>
+    </article>
+    <article class="report-card">
+      <p class="label">02 / FINANCIAL SCOPE</p>
+      <h2>How much authority?</h2>
+      <div class="amount"><span>Declared allowance</span><strong>MAX UINT160</strong><span>Effectively unlimited if the contract accepts it</span></div>
+      <dl>
+        <div><dt>Raw amount</dt><dd><code>1461501637330902918203684832716283019655932542975</code></dd></div>
+        <div><dt>Nonce</dt><dd><code>4</code></dd></div>
+        <div><dt>Permit signature deadline</dt><dd><code>1799999999</code> Unix seconds — deadline for presenting the signed permit, not the resulting allowance.</dd></div>
+        <div><dt>Allowance expiration</dt><dd><code>1893456000</code> Unix seconds — approximately January 2030 (more than three years after the pinned sample date).</dd></div>
+        <div><dt>Actual onchain allowance</dt><dd>Unknown; no RPC, transaction or wallet check was made.</dd></div>
+      </dl>
+    </article>
+  </div>
+  <section class="report-findings">
+    <p class="label">03 / MACHINE-DETECTED WARNING SIGNALS</p>
+    <h2>Two things to question.</h2>
+    <div class="finding">
+      <span class="flag-num">01</span><div><h3>MAXIMUM_ALLOWANCE</h3><p>The signature requests the maximum permitted integer. Even if the application currently expects a small transfer, this declaration could authorize a much broader token allowance if used as intended. A developer should prefer an exact, bounded amount wherever possible.</p></div>
+    </div>
+    <div class="finding">
+      <span class="flag-num">02</span><div><h3>LONG_LIVED</h3><p>The allowance expiration is years away. A short <em>signature submission deadline</em> does not by itself shorten an allowance that has already been successfully set. Consider a narrower expiry and an explicit revoke/monitor policy.</p></div>
+    </div>
+    <p class="report-note">These warnings come from the local parser, not a claimed formal audit. The example is deliberately concerning. No result on this page means a real wallet or transaction is legitimate or safe.</p>
+  </section>
+  <section class="report-findings boundaries">
+    <p class="label">04 / UNVERIFIED ASSUMPTIONS AND NEXT CHECKS</p>
+    <h2>What a real review would still require.</h2>
+    <div class="checks">
+      <div><strong>Verify domain and chain independently.</strong><p>Check the contract address against the protocol's own published docs. Treat JSON supplied by a website as untrusted; inspect the actual wallet confirmation and the typed fields.</p></div>
+      <div><strong>Identify the true spender.</strong><p>Check which contract would actually call Permit2 to spend tokens. A fictional address is not a reputable deployer or proof of intended authorization.</p></div>
+      <div><strong>Confirm precise amount and duration.</strong><p>Request the smallest useful spending amount, and distinguish the permit's signature deadline from the resulting allowance's expiration.</p></div>
+      <div><strong>Check actual execution separately.</strong><p>A static report cannot authenticate balances, nonce use, smart-contract code, token decimals, existing onchain approvals, custom wallet policies, or transaction outcome.</p></div>
+    </div>
+  </section>
+  <section class="upgrade">
+    <div><p class="eyebrow">OPTIONAL PROFESSIONAL-SCOPE SERVICE · 15 USDC LISTING</p>
+    <h2>Have one legitimate unsigned approval you need explained?</h2>
+    <p>The separate buyer-initiated service proposes a 1–2 page AI-assisted technical interpretation of one <strong>public/nonsecret unsigned</strong> EIP-712 or Permit2 request. The actual work, acceptance and delivery are only after a genuine third-party marketplace-funded order and a mutually acceptable scope. It does **not** include private data, wallet signing, recovering stolen assets, contract audit or a guaranteed safety verdict.</p>
+    <p class="micro">The marketplace listing is currently an offer only. No independent customer purchase, approval from an outside buyer, or new USDC receipt is asserted.</p>
+    </div>
+    <div class="purchase-actions">
+      <a class="btn primary" href="https://clawlancer.ai/marketplace/26905668-717a-41d7-9cc1-5d7ea1c331b1" target="_blank" rel="noopener noreferrer">View original 15 USDC fixed listing ↗</a>
+      <a class="btn secondary" href="../feedback/">Send nonsecret product feedback ↗</a>
+    </div>
+  </section>
+  <section class="repro">
+    <p class="eyebrow">OPEN TECHNICAL REPRODUCTION</p>
+    <h2>Audit the illustration, not a customer's data.</h2>
+    <p>The exact synthetic input and the corresponding local engine output are both public. The fixed analysis time is 2026-10-20 12:30 UTC so that deadline calculations are reproducible. They are <strong>not</strong> a paid deliverable, signed message, onchain receipt or assessment of a real protocol.</p>
+    <div class="links">
+      <a href="./sample-fictional-output.json">Static JSON example ↗</a>
+      <a href="https://github.com/livastic-vm2-primary-20260911/signscope-offline-permit-checker/blob/main/sample-report/generate.mjs" target="_blank" rel="noopener noreferrer">Deterministic generator ↗</a>
+      <a href="https://github.com/livastic-vm2-primary-20260911/signscope-offline-permit-checker/blob/main/src/analysis.mjs" target="_blank" rel="noopener noreferrer">Local scope analyzer ↗</a>
+    </div>
+  </section>
+</main>
+<footer><div class="container foot"><strong>SignScope · 2026</strong><span>One beneficial human owner · AI-assisted · no actual customer report</span><span>Local-only static inspection is not a security audit</span></div></footer>
+</body>
+</html>

@@ -26,3 +26,8 @@ No actual independent humans, purchases or paid contracts are claimed.
 Original SignScope 15 native Circle Base USDC fixed-price B2B human-readable scope review offer, NO verified orders:
 https://clawlancer.ai/marketplace/26905668-717a-41d7-9cc1-5d7ea1c331b1
 Not free API usage, wallet signing or genuine payment until an independently funded customer order and recipient settlement.
+
+FREE FICTIONAL one-case scope-report example (NOT customer work, no payment):
+https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/sample-report/
+Deterministic example JSON and source are included; no authenticated onchain
+state, signature, recipient identity, completed purchase or financial advice.

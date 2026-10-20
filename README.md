@@ -77,6 +77,15 @@ currency=USDC, listing_type=FIXED, times_purchased=0. This is a paid
 offer, NOT a buyer, order, earned 15 USDC, onchain receipt or audit.
 The client can inspect the listing and submit a genuinely funded purchase
 on that original marketplace, or email before ordering for suitability.
+The website now also has a FREE FICTIONAL preview of a typical report shape:
+https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/sample-report/
+It is generated deterministically from the exact source parser using a bounded,
+publicly fictional Permit2 PermitSingle JSON, with expected chain/contract/spender
+and a fixed observation time in October 2026. There are NO wallet keys,
+accounts, signed messages, funds, network calls, customer orders or audits.
+MAX_UINT160 and LONG_LIVED flags demonstrate the evidence/limitation format,
+not a real user loss or a "safe-to-sign" certification. The sample's
+charged amount is zero and it never claims a real paying buyer.
 
 Proposed 15 USDC AI-assisted review is separately scoped in writing,
 with legal owner contracting, payment method and acceptance criteria agreed
