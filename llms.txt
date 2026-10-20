@@ -1,0 +1,15 @@
+# SignScope — zero-connect DeFi unsigned EIP-712/approval scope explainer
+Public page: https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/
+Source: https://github.com/livastic-vm2-primary-20260911/signscope-offline-permit-checker
+License: MIT
+Input: unsigned EIP712 JSON or transaction envelope with chainId,to,data. Limit 40KB.
+No wallet signing, RPC, approvals, authentication, uploads, token transfer, or external API.
+Checks: declared chainId, verifyingContract, spender, token, raw uint amount, maxUint,
+validity window, known Permit/Permit2/EIP3009 and static ERC20/721 ABI selectors.
+Unknown selectors remain unknown. Cannot authenticate token contract or onchain state.
+All other user content remains on the buyer's own device until they actively send feedback.
+The product is currently free. Voluntary Base Circle USDC support via official
+public same-owner VM5 recipient, not a subscription or proof of customer revenue.
+Separate scoped 15 USDC technical review is a PROPOSAL, only by written agreement.
+One original economic owner across VM1,VM2,VM3,VM5. No external paid users proven.
+Never paste signed messages, seeds, secrets or keys. No investment or yield advice.

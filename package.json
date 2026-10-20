@@ -1,0 +1,1 @@
+{"name":"signscope-offline-permit-checker","version":"1.0.0","private":true,"type":"module","description":"Wallet-free offline EIP-712 Permit/Permit2 and ERC20 approval scope inspector.","scripts":{"test":"node --test test/*.test.mjs","check":"node --check src/analysis.mjs && node --check src/app.mjs"},"engines":{"node":">=20"}}

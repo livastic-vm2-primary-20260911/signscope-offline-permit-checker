@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10172a">
+<title>SignScope — Understand Permit2 & EIP-712 Approvals Before Signing</title>
+<meta name="description" content="Free, private, offline EIP-712 and ERC-20 approval explainer. Review spender, allowance, deadline, chainId and verifyingContract before signing. No wallet, no uploads. Optional Circle USDC support.">
+<meta name="robots" content="index,follow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<link rel="canonical" href="https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SignScope — Read the permission before you sign">
+<meta property="og:description" content="Zero-connect EIP-712 Permit/Permit2 and ERC-20 approval scope explainer. Local-only, no wallet required.">
+<meta property="og:url" content="https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/">
+<link rel="stylesheet" href="./style.css">
+<script type="module" src="./src/app.mjs"></script>
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">S<span>↗</span></span><span>Sign<span class="brand-light">Scope</span></span></a>
+  <nav aria-label="Main menu">
+    <a href="#analyzer">Analyzer</a>
+    <a href="#how">How it works</a>
+    <a href="#support">USDC & pricing</a>
+    <a href="#feedback">Feedback</a>
+    <a href="https://github.com/livastic-vm2-primary-20260911/signscope-offline-permit-checker" target="_blank" rel="noopener noreferrer">Source ↗</a>
+  </nav>
+</header>
+<main>
+<section class="hero container">
+  <div class="hero-copy">
+    <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> ON-DEVICE · NO WALLET CONNECTION · FREE</p>
+    <h1>Read the permission.<br><em>Before you sign.</em></h1>
+    <p class="lead">DeFi approvals are easy to sign and hard to read. SignScope translates <strong>unsigned EIP-712 permits and token approval calldata</strong> into a reviewable checklist: spender, token, chain, amount, and expiry.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#analyzer">Inspect an unsigned request ↓</a>
+      <a class="btn secondary" href="#how">See exactly what we check ↗</a>
+    </div>
+    <p class="micro">Paste <strong>unsigned JSON only</strong>. Never paste a signature, seed phrase, private key, or confidential wallet record. No automatic connections, approvals, transactions or RPC calls.</p>
+  </div>
+  <div class="preview-visual">
+    <div class="visual-header"><span class="signal" aria-hidden="true">◉</span> Sample · Base / USDC <span class="muted">offline preview</span></div>
+    <div class="preview-card">
+      <p class="preview-mini">TOKEN APPROVAL</p>
+      <strong class="preview-title">Permit</strong>
+      <div class="preview-row"><span>Network</span><b>Base · 8453</b></div>
+      <div class="preview-row"><span>Spender</span><b>0x2222…2222</b></div>
+      <div class="preview-row"><span>Maximum amount</span><b>1 USDC</b></div>
+      <div class="preview-row"><span>Deadline</span><b>Jan 2030</b></div>
+      <div class="preview-line"></div>
+      <div class="preview-flag"><span aria-hidden="true">!</span><div><b>Read before granting access</b><small>Display is illustrative. A known selector is not proof of a trusted contract.</small></div></div>
+    </div>
+    <div class="visual-foot"><span aria-hidden="true">●</span> Browser-only analysis <strong>$0</strong></div>
+  </div>
+</section>
+
+<section class="proof-band" aria-label="Product principles"><div class="container band-inner">
+  <div><strong>0</strong><span>wallet connections</span></div>
+  <div><strong>0</strong><span>external API calls</span></div>
+  <div><strong>51</strong><span>offline tests at launch</span></div>
+  <div><strong>4+</strong><span>permit and calldata families</span></div>
+</div></section>
+
+<section class="analyzer container" id="analyzer">
+  <div class="section-label"><span>01 / USE THE TOOL</span><span>FREE, LOCAL FIRST</span></div>
+  <div class="section-header"><div><h2>Your signature scope, in plain terms.</h2>
+    <p>Copy the <strong>unsigned structured message</strong> shown by a trusted app or a developer console. The browser parses it locally. Unknown data stays <em>unknown</em>; we never call any request “safe to sign.”</p></div>
+    <span class="scope-pill">No wallet needed</span></div>
+  <div class="workbench">
+    <div class="input-col">
+      <div class="panel-top">
+        <span class="dot orange"></span><span class="dot gold"></span><span class="dot teal"></span>
+        <strong>Unsigned input</strong><span class="panel-top-sub">40KB limit</span>
+      </div>
+      <div class="mode-bar" role="group" aria-label="Sample data">
+        <button type="button" class="sample-btn active" id="sample-permit">EIP-2612 Permit</button>
+        <button type="button" class="sample-btn" id="sample-permit2">Permit2</button>
+        <button type="button" class="sample-btn" id="sample-eip3009">USDC authorization</button>
+        <button type="button" class="sample-btn" id="sample-calldata">ERC-20 approve</button>
+      </div>
+      <label for="input-json" class="field-label">Unsigned JSON (EIP-712 or transaction envelope)</label>
+      <textarea id="input-json" aria-describedby="input-hint" spellcheck="false" placeholder="Paste UNSIGNED EIP-712 JSON with types, domain, primaryType and message, or JSON with chainId, to and data."></textarea>
+      <p id="input-hint" class="hint">No signatures. No signed transaction blob. No seed phrases. No private keys. All parsing stays on your device.</p>
+      <div class="expect-grid">
+        <div><label for="expected-chain">Expected chain</label>
+          <select id="expected-chain"><option value="8453" selected>Base (8453)</option><option value="1">Ethereum (1)</option><option value="42161">Arbitrum (42161)</option><option value="10">Optimism (10)</option><option value="137">Polygon (137)</option><option value="">Not sure</option></select></div>
+        <div><label for="expected-spender">Expected spender (optional)</label>
+          <input id="expected-spender" type="text" spellcheck="false" maxlength="42" placeholder="0x… contract address"></div>
+      </div>
+      <label class="field-label" for="expected-contract">Expected signing domain / token contract (optional)</label>
+      <input id="expected-contract" type="text" spellcheck="false" maxlength="42" placeholder="0x… verifyingContract / ERC-20 contract">
+      <div class="actions"><button class="btn primary wide" id="inspect" type="button">Inspect locally — FREE <span aria-hidden="true">↗</span></button><button class="btn ghost" id="clear" type="button">Clear input</button></div>
+      <p class="input-bottom"><span aria-hidden="true">⌁</span> Pure browser JavaScript. No tracking or network destinations. No signatures or transactions.</p>
+    </div>
+    <div class="result-col">
+      <div class="panel-top"><span class="dot green"></span><strong>Scope receipt</strong><span class="panel-top-sub">not a risk score</span></div>
+      <div class="output-top"><span class="eyebrow">INSPECTION RESULT</span><span id="kind" class="result-kind">No input yet</span></div>
+      <h3 id="result-heading">Your preview appears here.</h3>
+      <p id="result-blurb" class="result-lead">Try a fictional sample or paste your own unsigned message. This tool does not authenticate a dApp, check smart-contract bytecode, or simulate a transaction.</p>
+      <div class="metrics"><div><strong id="finding-count">—</strong><span>Attention signals</span></div><div><strong id="known-scope">—</strong><span>Structure recognized?</span></div></div>
+      <div class="result-details" id="result-details" aria-label="Analyzed approval details"></div>
+      <h4>What to review</h4><ul id="finding-list" class="finding-list"><li>Compare the displayed chain, contract, spender and amount with independent official documentation.</li></ul>
+      <div role="status" aria-live="polite" id="status" class="status">Ready for a local check. Nothing uploaded.</div>
+      <button id="download" type="button" class="btn secondary wide" disabled>Download local scope receipt JSON ↓</button>
+      <p class="result-small">This is a diagnostic explanation of untrusted inputs, never an endorsement to sign or a complete safety assessment.</p>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how"><div class="container">
+  <div class="section-label"><span>02 / WHAT WE CHECK</span><span>STRUCTURED DATA, NOT MARKETING CLAIMS</span></div>
+  <h2>Four checks that change the conversation.</h2>
+  <div class="cards">
+    <article><span class="card-symbol">01</span><h3>Who could move tokens?</h3><p>Extract spender or recipient from recognized Permit, Permit2 and ERC-20 approve requests. If Permit2 SignatureTransfer does not include a recipient, the tool flags that missing context.</p></article>
+    <article><span class="card-symbol">02</span><h3>How much and how long?</h3><p>Flag uint256/uint160 maximum approvals, zero amounts, unreadable values, expired and unusually long deadlines. Display USDC units only for Circle's known Base contract.</p></article>
+    <article><span class="card-symbol">03</span><h3>Which chain and contract?</h3><p>Show EIP-712 chainId and verifyingContract or the calldata target. Compare them against addresses you independently expect; warn about missing fields or mismatches.</p></article>
+    <article><span class="card-symbol">04</span><h3>What remains unknown?</h3><p>Custom contracts, Permit2 transfer recipients supplied later, dynamic calldata, approvals previously granted and real-world trust cannot be resolved from one unsigned JSON blob.</p></article>
+  </div>
+  <div class="reality"><div class="reality-mark">⚠</div><div><strong>Not a transaction simulator or revocation tool.</strong><p>For live allowance inspection and revocation, use an independently verified service such as <a href="https://revoke.cash/" target="_blank" rel="noopener noreferrer">Revoke.cash</a>. SignScope does not connect to your wallet or modify approvals. It does not guarantee protection from phishing.</p></div></div>
+</div></section>
+
+<section class="business container" id="support">
+  <div class="section-label"><span>03 / PRICING & CRYPTO SUPPORT</span><span>NO YIELD OR TRADING PROMISES</span></div>
+  <div class="section-header"><div><h2>Useful first. Payment by choice.</h2><p>The basic scope explainer stays free. Paying does not grant you a “safe to sign” verdict. We can discuss a bounded technical review before any invoice.</p></div></div>
+  <div class="plans">
+    <article class="plan free"><span class="plan-label">FREE / SELF-SERVICE</span><div class="plan-price">$0<span> forever</span></div><h3>Unsigned scope explanation</h3><p>Paste JSON, compare expected chain and spender, and download an evidence-limited report. Browser-local, no wallet connection, no uploads, no sign-up.</p><a class="btn secondary wide" href="#analyzer">Use the free checker ↗</a></article>
+    <article class="plan supported"><span class="plan-label">OPTIONAL / DIRECT USDC SUPPORT</span><div class="plan-price">1 <span>USDC suggested tip</span></div><h3>Support independent tooling</h3><p>If this free tool helps you, you can voluntarily send native Circle USDC on <strong>Base mainnet</strong> to the existing same-owner VM5 merchant wallet below. This is a tip, not an investment or paid audit order.</p>
+      <div class="recipient"><span>BASE USDC RECIPIENT (PUBLIC)</span><code id="payee">0x6b01efA0705E91a7aca54271510bf9e594717f34</code></div>
+      <button id="copy-payee" type="button" class="btn secondary wide">Copy recipient address ↗</button>
+      <a id="tip-uri" class="protocol-link" href="ethereum:0x833589fCD6eDb6E08f4C7C32D4f71b54bdA02913@8453/transfer?address=0x6b01efA0705E91a7aca54271510bf9e594717f34&amp;uint256=1000000">Open 1 USDC ERC-681 wallet request ↗</a>
+      <p class="plan-fine">An ERC-681 URI is a <em>payment request only</em>. Verify Base chain, Circle native USDC, full recipient and amount inside your wallet before confirming; compatibility varies. No charge occurs by viewing this page.</p>
+    </article>
+    <article class="plan review"><span class="plan-label">CUSTOM / AGREED SCOPE FIRST</span><div class="plan-price">15 <span>USDC proposed fixed pilot</span></div><h3>Technical permit scope review</h3><p>For a developer or protocol operator: one publicly shareable unsigned EIP-712 specimen, scope interpretation, clear assumptions and a concise red/green test outline. AI-assisted and independently scoped.</p>
+      <a class="btn primary wide" href="mailto:onecursor1@gmail.com?subject=SignScope%20paid%2015%20USDC%20technical%20scope%20review&amp;body=I%20am%20interested%20in%20one%20fixed-scope%20review.%20I%20will%20share%20a%20nonsecret%20unsigned%20example%20and%20agree%20scope%2C%20acceptance%2C%20AI%20rules%20and%20payment%20terms%20before%20paying.">Ask about a paid review ↗</a>
+      <p class="plan-fine">Not a commissioned order, guarantee of availability, professional security audit, investment advice, or automatic digital download. No upfront funds required. AI use, scope, legal contracting and payout must be agreed in writing first.</p></article>
+  </div>
+  <p class="payment-integrity">Payee disclosure: SignScope's VM2 frontend and the optional existing VM5 USDC recipient belong to <strong>one beneficial human owner</strong>. No fabricated independent customer or multi-wallet purchase is claimed. Gas fees, taxes and local law may apply.</p>
+</section>
+
+<section class="feedback" id="feedback"><div class="container feedback-grid">
+ <div><p class="eyebrow">04 / REAL USER FEEDBACK</p><h2>What would make this worth paying for?</h2><p>Tell us where current wallets make approvals confusing. Feedback determines what to build next. We ask for no private keys, signatures, balances or real wallet holdings, and don't store answers on this page.</p>
+ <p class="micro">Submitting opens a draft in your email application. You review it before sending. Nothing is posted automatically.</p></div>
+ <div class="feedback-form">
+  <label for="pain">Where do you get stuck?</label>
+  <select id="pain"><option value="Permit or Permit2 signing">Permit / Permit2 approval</option><option value="Unknown calldata or smart contract">Unknown calldata</option><option value="Wrong spender, chain or contract">Spender / chain mismatch</option><option value="AI agent wallet payment authorization">AI agent payment permissions</option><option value="Another issue">Other</option></select>
+  <label for="willingness">Would a verified human-readable report be worth paying for?</label>
+  <select id="willingness"><option value="$0, free tooling is enough">$0 — free is enough</option><option value="$1 USDC per use">$1 USDC / report</option><option value="$5 USDC per use">$5 USDC / report</option><option value="$15 USDC for scoped review">$15 USDC / scoped review</option><option value="$50+ for a developer integration">$50+ integration</option></select>
+  <label for="suggestion">What was missing? (Optional, no secrets)</label>
+  <textarea id="suggestion" maxlength="500" placeholder="A type of transaction you couldn't interpret, or a report format you'd use..."></textarea>
+  <a id="feedback-email" class="btn primary wide" href="mailto:onecursor1@gmail.com?subject=SignScope%20real%20user%20feedback">Open feedback email draft ↗</a>
+  <p class="micro"><a href="https://github.com/livastic-vm2-primary-20260911/signscope-offline-permit-checker/issues/new?template=feedback.yml" target="_blank" rel="noopener noreferrer">Prefer public GitHub feedback? Open the issue form ↗</a></p>
+ </div>
+</div></section>
+
+<section class="container provenance">
+ <h2>What SignScope does not promise</h2>
+ <p>No chain lookups, wallet connection, transaction simulation, signature validation, approval revocation, automated monitoring, financial return or protection guarantee. Users must independently verify any token and spender contract, inspect the wallet's original signing dialog, and use an authoritative revoke checker for existing permissions. Unknown scope means <strong>ask for help or decline to sign</strong>, not "probably safe."</p>
+ <div class="links">
+  <a href="https://eips.ethereum.org/EIPS/eip-712" target="_blank" rel="noopener noreferrer">EIP-712 standard ↗</a>
+  <a href="https://developers.uniswap.org/docs/protocols/permit2/overview" target="_blank" rel="noopener noreferrer">Permit2 reference ↗</a>
+  <a href="https://eips.ethereum.org/EIPS/eip-681" target="_blank" rel="noopener noreferrer">ERC-681 transfer URI ↗</a>
+  <a href="https://github.com/livastic-vm2-primary-20260911/signscope-offline-permit-checker" target="_blank" rel="noopener noreferrer">Tests and code ↗</a>
+ </div>
+</section>
+</main>
+<footer><div class="container foot"><strong>SignScope · 2026</strong><span>Offline-by-design · AI-assisted · one real owner · MIT open source</span><span>Zero wallet authorization by this website</span></div></footer>
+</body>
+</html>
