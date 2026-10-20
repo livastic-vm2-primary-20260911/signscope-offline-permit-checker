@@ -56,7 +56,7 @@ a browser-native POST form to the single existing legal owner's verified
 FormSubmit inbox. No external scripts or tracking are used; the default
 human-consent checkbox is unchecked and required. The optional one-line
 example is limited to 260 characters and strictly asks for fictional/general
-content. Any FormSubmit CAPTCHA remains enforced. The redirect
+content. Any FormSubmit CAPTCHA remains enforced. The actual initial owner activation attempt returned FormSubmit's public Unable to submit form error; its official FAQ recommends an explicit hidden _url. This site now includes the exact public form URL in the provider POST and uses strict-origin-when-cross-origin (origin-only rather than full path) Referer policy, preserving the separation from the private offline analyzer. A technical owner setup post, when attempted, is labeled NOT CUSTOMER DATA and never counted as external user feedback. The redirect
 /feedback/thanks/ is noindex and cannot attest provider delivery, ownership,
 contract formation or actual user participation. We do not submit test
 feedback ourselves and never count page visits as independent user demand.

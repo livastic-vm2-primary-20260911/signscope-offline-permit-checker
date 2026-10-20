@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#10172a">
-<meta name="referrer" content="no-referrer">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="index,follow">
 <meta name="description" content="Help improve the free SignScope DeFi Permit2 and EIP-712 pre-sign scope explainer. Optional 1-minute feedback without wallet, GitHub login or payment; consent required before third-party submission.">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'self'; img-src 'self'; connect-src 'none'; form-action https://formsubmit.co; base-uri 'none'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
@@ -33,6 +33,7 @@
     <input type="hidden" name="_template" value="table">
     <input type="hidden" name="_next" value="https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/feedback/thanks/">
     <input type="hidden" name="product" value="SignScope - local EIP712/Permit2 inspector">
+    <input type="hidden" name="_url" value="https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/feedback/">
     <div class="honey" aria-hidden="true">
       <label for="honey">Leave empty</label>
       <input id="honey" name="_honey" type="text" tabindex="-1" autocomplete="off">
@@ -81,7 +82,7 @@
     <p class="safety"><strong>DO NOT include:</strong> seed phrases, private keys, wallet addresses, signed messages, actual transaction histories, real balances, personal data, or confidential customer samples. We only want general workflows and fictional examples.</p>
     <label class="consent" for="external-consent">
      <input id="external-consent" name="explicit_third_party_feedback_consent" type="checkbox" required value="yes">
-     <span>I understand that clicking Send transmits ONLY my chosen answers and optional example to the independent FormSubmit provider for delivery to the existing one-owner contact inbox. FormSubmit may process my IP and submission metadata and may require a human CAPTCHA. I have not included wallet secrets or sensitive data. This is not a payment or purchase.</span>
+     <span>I understand that clicking Send transmits ONLY my chosen answers and optional example to the independent FormSubmit provider for delivery to the existing one-owner contact inbox. FormSubmit may process my IP and submission metadata, including the public site origin and this form URL, and may require a human CAPTCHA. I have not included wallet secrets or sensitive data. This is not a payment or purchase.</span>
     </label>
     <button type="submit" class="btn primary submit">Send optional feedback — no wallet or payment ↗</button>
    </form>

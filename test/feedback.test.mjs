@@ -159,3 +159,20 @@ test("llms discoverability describes privacy boundary and no fake paying custome
   assert.ok(llms.includes("explicit checkbox consent"));
   assert.ok(llms.includes("No actual independent humans"));
 });
+
+test("FormSubmit first-party POST contains exact actual public form URL (_url) after observed activation error",()=>{
+  assert.ok(feedback.includes('name="_url" value="'+url+'"'));
+  assert.ok(feedback.includes('method="POST"'));
+  assert.ok(feedback.includes('action="https://formsubmit.co/onecursor1@gmail.com"'));
+});
+test("cross-origin provider gets only public origin via Referer plus posted _url",()=>{
+  assert.ok(feedback.includes('name="referrer" content="strict-origin-when-cross-origin"'));
+  assert.ok(!feedback.includes('name="referrer" content="no-referrer"'));
+  assert.ok(feedback.includes('including the public site origin and this form URL'));
+});
+test("main free wallet analyzer retains strict CSP even when external consent form fixes _url",()=>{
+  const csp=main.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1];
+  assert.ok(csp?.includes("connect-src 'none'"));
+  assert.ok(csp.includes("form-action 'none'"));
+  assert.ok(!main.includes('name="_url"'));
+});
