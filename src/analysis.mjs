@@ -165,7 +165,31 @@ export function inspectTyped(raw,opts={}){
       checkAmount(a.amount,a.token);
     }
     checkDeadline("signature deadline",m.deadline);
-    add("SPENDER_OUTSIDE_SIGNATURE","Permit2 SignatureTransfer spender/recipient can be chosen via calldata not included in signed typed data.");
+    // The PermitHash library includes msg.sender in the signed struct hash
+    // for SignatureTransfer even though permit's Solidity struct does NOT
+    // declare a spender field. A complete EIP-712 signing request typically
+    // declares spender:address in types and supplies the intended caller in
+    // message. Do not conflate this caller-bound spender with the later
+    // transferDetails.to and requestedAmount supplied to the contract call.
+    const signatureType=t[primary];
+    const declaredSpender=signatureType.some(
+      f=>isObj(f)&&f.name==="spender"&&f.type==="address"
+    );
+    if(declaredSpender){
+      spender=addr(m.spender);
+      if(!spender)add("SPENDER_MISSING_IN_SUPPLIED_TYPED_DATA",
+        "Signed Permit2 SignatureTransfer caller/spender was not present as a valid address; cannot verify caller binding from this JSON.");
+    } else {
+      add("SPENDER_NOT_DECLARED_IN_TYPES",
+        "Supplied EIP-712 type omits or mistypes the spender:address field. Permit2 PermitHash includes msg.sender in its signature digest; this JSON cannot prove which caller was bound.");
+    }
+    if(primary==="PermitWitnessTransferFrom"){
+      add("WITNESS_REVIEW_REQUIRED",
+        "Witness-bound requests can sign additional application data; the witness type/hash and eventual transfer details are NOT decoded or authenticated here.");
+    } else {
+      add("RECIPIENT_OUTSIDE_SIGNED_PERMIT",
+        "Permit2 SignatureTransfer separately receives recipient and requestedAmount in transferDetails. The signed spender/caller is bound through PermitHash msg.sender, but this unsigned JSON does NOT reveal or verify the eventual recipient or call.");
+    }
   }
   // A matching field name with the wrong declared EIP-712 type is NOT
   // evidence that a token contract would consume the value as expected.
@@ -175,8 +199,8 @@ export function inspectTyped(raw,opts={}){
       TransferWithAuthorization:[["from","address"],["to","address"],["value","uint256"],["validAfter","uint256"],["validBefore","uint256"],["nonce","bytes32"]],
       PermitSingle:[["details","PermitDetails"],["spender","address"],["sigDeadline","uint256"]],
       PermitBatch:[["details","PermitDetails[]"],["spender","address"],["sigDeadline","uint256"]],
-      PermitTransferFrom:[["permitted","TokenPermissions"],["nonce","uint256"],["deadline","uint256"]],
-      PermitBatchTransferFrom:[["permitted","TokenPermissions[]"],["nonce","uint256"],["deadline","uint256"]]
+      PermitTransferFrom:[["permitted","TokenPermissions"],["spender","address"],["nonce","uint256"],["deadline","uint256"]],
+      PermitBatchTransferFrom:[["permitted","TokenPermissions[]"],["spender","address"],["nonce","uint256"],["deadline","uint256"]]
     };
     for(const [name,type] of required[primary]||[]){
       if(!t[primary]?.some(f=>isObj(f)&&f.name===name&&f.type===type))
@@ -277,6 +301,31 @@ export const SAMPLE_PERMIT=JSON.stringify({
  message:{owner:"0x1111111111111111111111111111111111111111",
           spender:"0x2222222222222222222222222222222222222222",
           value:"1000000",nonce:"1",deadline:"1893456000"}
+},null,2);
+// Fictional official-shaped Permit2 SignatureTransfer typed-data sample.
+ // The spender in the digest must match the actual caller (msg.sender).
+ // The later transferDetails recipient/requested amount are deliberately
+ // unknown and NOT alleged to be signed by this JSON object.
+export const SAMPLE_SIGNATURE_TRANSFER=JSON.stringify({
+ types:{
+   EIP712Domain:[
+    {name:"name",type:"string"},{name:"chainId",type:"uint256"},
+    {name:"verifyingContract",type:"address"}],
+   TokenPermissions:[
+    {name:"token",type:"address"},{name:"amount",type:"uint256"}],
+   PermitTransferFrom:[
+    {name:"permitted",type:"TokenPermissions"},
+    {name:"spender",type:"address"},
+    {name:"nonce",type:"uint256"},
+    {name:"deadline",type:"uint256"}]
+ },
+ primaryType:"PermitTransferFrom",
+ domain:{name:"Permit2",chainId:8453,verifyingContract:PERMIT2},
+ message:{
+   permitted:{token:BASE_USDC,amount:"5000000"},
+   spender:"0x2222222222222222222222222222222222222222",
+   nonce:"7",deadline:"1893456000"
+ }
 },null,2);
 export const SAMPLE_APPROVE=JSON.stringify({
  chainId:8453,to:BASE_USDC,from:"0x1111111111111111111111111111111111111111",

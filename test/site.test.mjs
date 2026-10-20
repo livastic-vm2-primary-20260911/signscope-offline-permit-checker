@@ -29,7 +29,7 @@ test("page CSP forbids every external connection",()=>{
 });
 test("only one local script module and stylesheet",()=>{
   const scripts=[...h.matchAll(/<script\b[^>]*src="([^"]+)"/g)].map(m=>m[1]);
-  assert.deepEqual(scripts,["./src/app.mjs?v=20261020-typecheck"]);
+  assert.deepEqual(scripts,["./src/app.mjs?v=20261020-sigtransfer"]);
   assert.ok(h.includes('href="./style.css"'));
 });
 test("UI never invokes provider or wallet signing",()=>{
@@ -60,7 +60,7 @@ test("signed messages and private keys are rejected rather than analyzed",()=>{
   assert.ok(h.includes("Never paste a signature"));
 });
 test("all sample controls have accessible labels",()=>{
-  for(const id of ["sample-permit","sample-permit2","sample-eip3009","sample-calldata",
+  for(const id of ["sample-permit","sample-permit2","sample-signature-transfer","sample-eip3009","sample-calldata",
     "input-json","expected-chain","expected-spender","expected-contract",
     "inspect","clear","download","status","result-details","finding-list"]){
     assert.ok(h.includes('id="'+id+'"'),id);

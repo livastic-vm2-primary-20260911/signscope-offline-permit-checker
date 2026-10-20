@@ -1,14 +1,15 @@
 import {
   inspect, BASE_USDC, PERMIT2, MAX160,
-  SAMPLE_PERMIT, SAMPLE_APPROVE
-} from "./analysis.mjs?v=20261020-typecheck";
+  SAMPLE_PERMIT, SAMPLE_APPROVE, SAMPLE_SIGNATURE_TRANSFER
+} from "./analysis.mjs?v=20261020-sigtransfer";
 
 const $ = id => document.getElementById(id);
 const input=$("input-json");
 const status=$("status");
 const sampleNames={
   "sample-permit":"EIP-2612 Permit",
-  "sample-permit2":"Permit2",
+  "sample-permit2":"Permit2 AllowanceTransfer",
+  "sample-signature-transfer":"Permit2 SignatureTransfer",
   "sample-eip3009":"USDC authorization",
   "sample-calldata":"ERC-20 approve"
 };
@@ -54,6 +55,7 @@ const sample3=JSON.stringify({
 const samples={
   "sample-permit":SAMPLE_PERMIT,
   "sample-permit2":sample2,
+  "sample-signature-transfer":SAMPLE_SIGNATURE_TRANSFER,
   "sample-eip3009":sample3,
   "sample-calldata":SAMPLE_APPROVE
 };

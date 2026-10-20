@@ -216,7 +216,8 @@ test("Permit2 SignatureTransfer warns that actual recipient outside signed data"
  };
  const r=report(d);
  assert.equal(r.observed.recognized,true);
- assert.ok(trace(r).includes("SPENDER_OUTSIDE_SIGNATURE"));
+ assert.ok(trace(r).includes("SPENDER_NOT_DECLARED_IN_TYPES"));
+ assert.ok(trace(r).includes("RECIPIENT_OUTSIDE_SIGNED_PERMIT"));
  assert.equal(r.observed.amounts[0].display,"5 native Circle USDC (Base)");
 });
 test("Permit2 SignatureTransfer expected spender cannot be proven",()=>{

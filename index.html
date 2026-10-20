@@ -13,7 +13,7 @@
 <meta property="og:description" content="Zero-connect EIP-712 Permit/Permit2 and ERC-20 approval scope explainer. Local-only, no wallet required.">
 <meta property="og:url" content="https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/">
 <link rel="stylesheet" href="./style.css">
-<script type="module" src="./src/app.mjs?v=20261020-typecheck"></script>
+<script type="module" src="./src/app.mjs?v=20261020-sigtransfer"></script>
 </head>
 <body>
 <header class="nav">
@@ -74,13 +74,15 @@
       </div>
       <div class="mode-bar" role="group" aria-label="Sample data">
         <button type="button" class="sample-btn active" id="sample-permit">EIP-2612 Permit</button>
-        <button type="button" class="sample-btn" id="sample-permit2">Permit2</button>
+        <button type="button" class="sample-btn" id="sample-permit2">Permit2 Allowance</button>
+        <button type="button" class="sample-btn" id="sample-signature-transfer">Permit2 One-time</button>
         <button type="button" class="sample-btn" id="sample-eip3009">USDC authorization</button>
         <button type="button" class="sample-btn" id="sample-calldata">ERC-20 approve</button>
       </div>
       <label for="input-json" class="field-label">Unsigned JSON (EIP-712 or transaction envelope)</label>
       <textarea id="input-json" aria-describedby="input-hint" spellcheck="false" placeholder="Paste UNSIGNED EIP-712 JSON with types, domain, primaryType and message, or JSON with chainId, to and data."></textarea>
       <p id="input-hint" class="hint">No signatures. No signed transaction blob. No seed phrases. No private keys. All parsing stays on your device.</p>
+      <p class="hint">Permit2 <strong>AllowanceTransfer</strong> grants reusable approval to the declared spender; <strong>SignatureTransfer</strong> binds the intended caller in the signed EIP-712 hash while final recipient/requestedAmount come from later calldata. A local JSON preview cannot verify that later call.</p>
       <div class="expect-grid">
         <div><label for="expected-chain">Expected chain</label>
           <select id="expected-chain"><option value="8453" selected>Base (8453)</option><option value="1">Ethereum (1)</option><option value="42161">Arbitrum (42161)</option><option value="10">Optimism (10)</option><option value="137">Polygon (137)</option><option value="">Not sure</option></select></div>

@@ -28,9 +28,16 @@ displays UNKNOWN rather than guessing behavior.
 EIP-712 domain fields such as chainId and verifyingContract scope a signed
 message; user interfaces often bury them. ERC-2612 / Permit2 may grant large
 allowances. A signed Permit2 SignatureTransfer request may not include the
-ultimate recipient in the signed typed message: the spender/caller can
-supply downstream details in calldata. This offline checker shows what
-you can and cannot infer before signing.
+ultimate recipient in the signed typed message. Critically, the official
+Uniswap PermitHash library DOES hash spender via msg.sender, so a normal
+EIP-712 signing request declares spender:address and includes the intended
+caller. The separate later SignatureTransfer call supplies transferDetails.to
+and requestedAmount; they are not interchangeable with the signed spender.
+SignScope displays spender ONLY if typed-data declarations include its
+address type. It warns when this value cannot be established from the
+unsigned JSON. It cannot authenticate the eventual caller, recipient or
+transaction. This offline checker shows what you can and cannot infer
+before signing.
 
 References (official):
 
@@ -105,7 +112,7 @@ Requires Node >=20. No npm dependencies or wallets.
     npm test
     npm run check
 
-The source is MIT. The current 87 passing offline tests include privacy and payment-request constraints. The unit suite covers chain, domain, spender, amount,
+The source is MIT. Offline regression tests cover privacy, wallet-free parsing and typed SignatureTransfer caller binding. The unit suite covers chain, domain, spender, amount,
 Permit2 maxUint160, EIP3009 deadline and the known static ABI selectors.
 There are no hosted billing or account credentials to install.
 
