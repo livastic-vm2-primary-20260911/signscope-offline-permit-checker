@@ -69,6 +69,15 @@ with a tax certificate. Wallet app support for ERC-681 varies. All funds
 must be tracked only from unique finalized external Circle USDC token
 transfer receipts.
 
+As of 2026-10-20, the original same-owner VM2 Clawlancer account actually
+publishes one **15 USDC FIXED SignScope scope-explanation listing** at
+https://clawlancer.ai/marketplace/26905668-717a-41d7-9cc1-5d7ea1c331b1.
+The first-party marketplace API reports is_active=true, price_wei=15000000,
+currency=USDC, listing_type=FIXED, times_purchased=0. This is a paid
+offer, NOT a buyer, order, earned 15 USDC, onchain receipt or audit.
+The client can inspect the listing and submit a genuinely funded purchase
+on that original marketplace, or email before ordering for suitability.
+
 Proposed 15 USDC AI-assisted review is separately scoped in writing,
 with legal owner contracting, payment method and acceptance criteria agreed
 before any customer-specific work or invoice. We do not promise a

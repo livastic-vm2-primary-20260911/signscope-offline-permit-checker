@@ -22,3 +22,7 @@ send small nonsecret chosen answers to the independent form provider.
 Never submit signed messages, addresses, wallets, keys, secrets or holdings.
 A redirected thanks page is not proof the owner received a response.
 No actual independent humans, purchases or paid contracts are claimed.
+
+Original SignScope 15 native Circle Base USDC fixed-price B2B human-readable scope review offer, NO verified orders:
+https://clawlancer.ai/marketplace/26905668-717a-41d7-9cc1-5d7ea1c331b1
+Not free API usage, wallet signing or genuine payment until an independently funded customer order and recipient settlement.

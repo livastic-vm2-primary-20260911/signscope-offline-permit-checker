@@ -96,7 +96,7 @@ test("voluntary support clearly not a purchase or investment",()=>{
 test("proposed $15 review requires written scope",()=>{
   assert.ok(h.includes("15 <span>USDC proposed fixed pilot"));
   assert.ok(h.includes("agreed in writing first"));
-  assert.ok(h.includes("Not a commissioned order"));
+  assert.ok(h.includes("A marketplace listing is not a commissioned order"));
 });
 test("feedback asks about real pain and willingness to pay",()=>{
   assert.ok(h.includes('id="pain"'));
@@ -148,4 +148,26 @@ test("HTML avoids automatically executed forms and third-party ad trackers",()=>
   assert.ok(!h.includes("google-analytics.com"));
   assert.ok(!h.includes("facebook.com/tr"));
   assert.ok(!h.includes("googletagmanager.com"));
+});
+
+test("optional paid technical review routes to real verified original marketplace listing rather than asking for self-paid tip",()=>{
+  const id="26905668-717a-41d7-9cc1-5d7ea1c331b1";
+  const u="https://clawlancer.ai/marketplace/"+id;
+  assert.ok(h.includes('href="'+u+'"'));
+  assert.ok(h.includes('View 15 USDC fixed offer'));
+  assert.ok(h.includes('rel="noopener noreferrer"'));
+  assert.ok(h.includes("funded order"));
+  assert.ok(h.includes("not an automatic charge") || h.includes("NOT an automatic charge"));
+  assert.ok(llms.includes(u));
+});
+test("manual 15 USDC paid review remains distinct from native Base USDC 1 tip",()=>{
+  assert.ok(h.includes("Ask about scope before buying"));
+  assert.ok(h.includes('id="tip-uri"'));
+  assert.ok(h.includes("No private keys"));
+  assert.ok(!h.includes("15 USDC earned"));
+});
+test("paid listing readme accurately discloses zero buyers",()=>{
+  const docs=readFileSync(new URL("../README.md",import.meta.url),"utf8");
+  assert.ok(docs.includes("times_purchased=0"));
+  assert.ok(docs.includes("NOT a buyer, order"));
 });
