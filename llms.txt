@@ -31,3 +31,9 @@ FREE FICTIONAL one-case scope-report example (NOT customer work, no payment):
 https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/sample-report/
 Deterministic example JSON and source are included; no authenticated onchain
 state, signature, recipient identity, completed purchase or financial advice.
+
+Free LOCAL Permit2 call-preflight tool (not a contract simulator):
+https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/permit2-debug/
+AllowanceTransfer vs SignatureTransfer known method/struct, caller vs spender,
+unknown ERC20 state, batch vs single amount, deadlines, uint160/uint256 limits;
+no RPC, actual wallet access, token signing, payment, guarantees or external uploads.

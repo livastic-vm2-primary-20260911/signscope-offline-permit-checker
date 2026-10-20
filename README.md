@@ -23,6 +23,34 @@ state, check smart contract code, look up live approvals, simulate calldata
 or ensure a protocol implements the standard. For unknown calldata, it
 displays UNKNOWN rather than guessing behavior.
 
+## New: free local Permit2 call-preflight diagnostics
+
+A second separate, privacy-first self-service frontend is available:
+https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/permit2-debug/
+
+It was designed around real public user confusion over mixed
+Uniswap Permit2 AllowanceTransfer/SignatureTransfer ABI shapes, in
+https://github.com/Uniswap/permit2/issues/268. The site is not endorsed by
+Uniswap or a wallet provider and does not imply the actual user purchased it.
+
+Free input is a **public or fictional UNSIGNED JSON call-planning object** with
+flow, chain, intended spender, claimed caller, token, permit structs and
+caller-supplied transfer details. The tool compares the original official
+IAllowanceTransfer and ISignatureTransfer interfaces: it flags wrong
+permitBatch() methods, Permit2 itself as a dApp spender, a transferFrom caller
+different from the permitted spender, a requested amount greater than signed
+allowance, token chain mismatches, signature-vs-allowance deadlines, uint160
+overflow, and nonstandard extra fields in SignatureTransfer.
+
+Only user-submitted claims are analyzed. Actual ERC-20 token approval,
+nonce bitmap, signer, caller, deployed bytecode, transaction simulation,
+revert reason, gas or token balance are NOT fetched or authenticated.
+The page uses CSP connect-src none, has no wallet/RPC/transaction calls, no
+analytics/tracking, no upstream API dependency and no paid action.
+The separated, optional already-existing Clawlancer **15 USDC fixed review**
+is only a buyer-initiated offer, never earned revenue until genuine separate
+outside order and independent finalized payout.
+
 ## Why this solves a real problem
 
 EIP-712 domain fields such as chainId and verifyingContract scope a signed

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10172a">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="index,follow">
+<meta name="description" content="Free, wallet-free Permit2 EIP-712 allowance/signature transfer troubleshooting. Inspect spender, actual caller, calldata shape, token limits, nonce, expiry, chain and ABI mistakes in local JSON.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; form-action 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; upgrade-insecure-requests">
+<link rel="canonical" href="https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/permit2-debug/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SignScope: Why does my Permit2 call revert?">
+<meta property="og:url" content="https://livastic-vm2-primary-20260911.github.io/signscope-offline-permit-checker/permit2-debug/">
+<meta property="og:description" content="Free, private browser-side diagnostics for Permit2 AllowanceTransfer and SignatureTransfer calls. No key, wallet, RPC or simulation.">
+<title>SignScope Permit2 Debug Lab — Free preflight for allowance and signature transfers</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="./debug.css">
+<script type="module" src="./app.mjs"></script>
+</head>
+<body>
+<header class="nav">
+ <a class="brand" href="../"><span class="brand-icon" aria-hidden="true">S<span>↗</span></span>Sign<span class="brand-light">Scope</span></a>
+ <nav aria-label="Site navigation">
+  <a href="#lab">Debug lab</a>
+  <a href="#how">Flow differences</a>
+  <a href="./#results">Example result</a>
+  <a href="../sample-report/">Permit2 sample report ↗</a>
+  <a href="../feedback/">Feedback ↗</a>
+ </nav>
+</header>
+<main>
+<section class="hero container debug-hero">
+ <div>
+  <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> ACTUAL DEFI DEVELOPER PAIN · FREE OFFLINE DIAGNOSIS</p>
+  <h1>Permit2 call reverts?<br><em>Check the scope first.</em></h1>
+  <p class="lead">Is your app mixing <strong>AllowanceTransfer</strong> and <strong>SignatureTransfer</strong>? Does your signed spender differ from the contract actually calling Permit2? Before debugging gas, compare the required fields and function names using <strong>private browser-local JSON checks</strong>.</p>
+  <div class="hero-actions">
+    <a class="btn primary" href="#lab">Try a fictional broken example ↓</a>
+    <a class="btn secondary" href="#how">Review official ABI ↗</a>
+  </div>
+  <p class="micro">No wallet, signing, RPC, onchain approval lookup, secrets, balances, transaction submission or third-party analytics. No payment is made by viewing, typing, or analyzing this page. Never paste private keys, signed messages, API tokens or personal data.</p>
+ </div>
+ <div class="mini-visual" aria-label="Permit2 flow scope comparison">
+  <div class="mini-title">The bug is often in the interface.</div>
+  <div class="mini-row"><span>AllowanceTransfer</span><strong>permit()</strong></div>
+  <div class="mini-row"><span>Reusable spender</span><strong>permit.spender</strong></div>
+  <div class="mini-row"><span>Later spend caller</span><strong>msg.sender</strong></div>
+  <div class="mini-divider"></div>
+  <div class="mini-row"><span>SignatureTransfer</span><strong>permitTransferFrom()</strong></div>
+  <div class="mini-row"><span>Spender binding</span><strong>calling contract</strong></div>
+  <div class="mini-row"><span>Actual recipient</span><strong>transferDetails.to</strong></div>
+  <div class="mini-warning">Do not infer onchain validity from this diagram.</div>
+ </div>
+</section>
+<section class="proof-band"><div class="container band-inner">
+ <div><strong>0</strong><span>connected wallets</span></div>
+ <div><strong>0</strong><span>RPC requests</span></div>
+ <div><strong>2</strong><span>specific Permit2 flows</span></div>
+ <div><strong>$0</strong><span>for local checks</span></div>
+</div></section>
+<section class="container analyzer" id="lab">
+ <div class="section-label"><span>01 / PUBLIC SYNTHETIC DATA FIRST</span><span>CALL SHAPE CHECK · NO NETWORK</span></div>
+ <div class="section-header"><div><h2>Review the call before gas estimation.</h2>
+ <p>Load a fictional example or paste a <strong>nonsecret, unsigned</strong> JSON planning envelope. This tool reads declared caller, spender, token, transfer amount and expected chain; it cannot run the contract or decode a revert.</p></div><span class="scope-pill">Local-only JSON</span></div>
+ <div class="workbench">
+  <div class="input-col debug-input">
+   <div class="panel-top"><span class="dot orange"></span><span class="dot gold"></span><span class="dot teal"></span><strong>Permit2 call plan</strong><span class="panel-top-sub">max 40KB</span></div>
+   <div class="mode-bar" role="group" aria-label="Fictional sample input">
+    <button id="sample-broken" type="button" class="sample-btn active">Broken allowance example</button>
+    <button id="sample-signature" type="button" class="sample-btn">SignatureTransfer example</button>
+   </div>
+   <label class="field-label" for="plan">Unsigned JSON with flow, caller, intendedSpender, permit and transfer details</label>
+   <textarea id="plan" spellcheck="false" aria-describedby="privacy-hint" placeholder='{"flow":"signatureTransfer","chainId":11155111,...}'></textarea>
+   <p class="hint" id="privacy-hint">No signed data. No real wallet history. Examples are fictional. If unsure what to paste, use the buttons above.</p>
+   <label class="field-label" for="expected-chain">Independently expected chain</label>
+   <select id="expected-chain">
+    <option value="11155111" selected>Ethereum Sepolia (11155111)</option>
+    <option value="8453">Base mainnet (8453)</option>
+    <option value="1">Ethereum mainnet (1)</option>
+    <option value="42161">Arbitrum (42161)</option>
+    <option value="10">Optimism (10)</option>
+    <option value="">Not sure — report only declared chain</option>
+   </select>
+   <div class="actions">
+    <button id="inspect" type="button" class="btn primary wide">Inspect Permit2 flow locally — FREE ↗</button>
+    <button id="reset" type="button" class="btn ghost">Clear data</button>
+   </div>
+   <p class="input-bottom">No private signing key, wallet extension, gas, escrow or payment. The browser does not upload your pasted JSON.</p>
+  </div>
+  <div class="result-col" id="results">
+   <div class="panel-top"><span class="dot green"></span><strong>Local explanation</strong><span class="panel-top-sub">not a safety verdict</span></div>
+   <div class="output-top"><span class="eyebrow">WHAT CAN WE INFER?</span><span id="kind" class="result-kind">No input inspected</span></div>
+   <h3 id="summary">Run the fictional broken case first.</h3>
+   <p class="result-lead" id="blurb">Differences in method names, caller, spender, signed amount, expiry and chain are often more useful than a generic estimateGas error.</p>
+   <div class="metrics">
+    <div><strong id="warning-count">—</strong><span>Needs attention</span></div>
+    <div><strong id="money-cost">0</strong><span>USDC charged</span></div>
+   </div>
+   <div class="result-details" id="details" aria-label="Derived call details"></div>
+   <h4>Scope findings</h4>
+   <ul class="finding-list" id="findings"><li>Inspect a sample; no signing or chain state is available.</li></ul>
+   <div role="status" aria-live="polite" id="status" class="status">Ready to check locally. No network requests.</div>
+   <button id="download" type="button" class="btn secondary wide" disabled>Download non-secret local checklist JSON ↓</button>
+   <p class="result-small">An unknown or unflagged field never implies a safe call. Check the actual ABI, EIP-712 hash, nonce state and revert separately.</p>
+  </div>
+ </div>
+</section>
+<section class="how" id="how"><div class="container">
+ <div class="section-label"><span>02 / THE ACTUAL UNISWAP INTERFACES</span><span>OFFICIAL OPEN-SOURCE EVIDENCE</span></div>
+ <h2>Two mechanisms, two different calls.</h2>
+ <div class="cards">
+  <article><span class="card-symbol">ALLOWANCE</span><h3>PermitSingle / PermitBatch</h3>
+   <p>Use <code>permit(address owner, PermitSingle|PermitBatch, bytes signature)</code>, then a separate <code>transferFrom</code>. The signed spender should match the contract that later invokes transferFrom; a relayer may submit the original permit.</p></article>
+  <article><span class="card-symbol">SIGNATURE</span><h3>PermitTransferFrom</h3>
+   <p>Use <code>permitTransferFrom(permit, transferDetails, owner, signature)</code>. Signed permission includes token/amount, nonce and deadline; actual caller is incorporated in contract authorization, while <code>transferDetails.to</code> is supplied by the call.</p></article>
+  <article><span class="card-symbol">SEPARATE LAYERS</span><h3>ERC-20 → Permit2</h3>
+   <p>The token's ERC-20 approval of the Permit2 contract differs from the spender's Permit2-level permission. A checkbox or copied JSON does not independently prove either live allowance.</p></article>
+  <article><span class="card-symbol">UNKNOWN</span><h3>No gas or revert simulation</h3>
+   <p>We don't sign, broadcast, estimate gas, fetch allowance state, inspect deployed bytecode, recover a signature, decode custom errors or certify a protocol. Use a verified testnet/local fork for execution debugging.</p></article>
+ </div>
+ <div class="reality"><div class="reality-mark">!</div><div><strong>Specific outside-user context:</strong>
+  <p>This tool addresses a class of mistakes illustrated by <a href="https://github.com/Uniswap/permit2/issues/268" rel="noopener noreferrer" target="_blank">a real public Uniswap Permit2 debugging question</a>. No affiliation, endorsement, actual remediation result, paying user or verified signature is implied.</p></div></div>
+ <div class="links source-links">
+   <a href="https://github.com/Uniswap/permit2/blob/main/src/interfaces/IAllowanceTransfer.sol" target="_blank" rel="noopener noreferrer">Official AllowanceTransfer interface ↗</a>
+   <a href="https://github.com/Uniswap/permit2/blob/main/src/interfaces/ISignatureTransfer.sol" target="_blank" rel="noopener noreferrer">Official SignatureTransfer interface ↗</a>
+   <a href="https://github.com/livastic-vm2-primary-20260911/signscope-offline-permit-checker" target="_blank" rel="noopener noreferrer">Source and 50+ local regression tests ↗</a>
+ </div>
+</div></section>
+<section class="business container" id="commercial">
+ <div class="section-label"><span>03 / ACTUAL COMMERCIAL OPTIONS</span><span>FREE FIRST · BUYER DECIDES</span></div>
+ <h2>Explain the issue before asking for money.</h2>
+ <div class="debug-offer">
+  <div><p class="eyebrow">FREE LOCAL CHECKER</p><h3>Use the app yourself</h3>
+   <p>No account, wallet, token approval, key, API key or payment. For deeper EIP-712 declaration inspection also use the <a href="../#analyzer">original SignScope free inspector</a>.</p>
+   <a class="btn secondary" href="#lab">Run free checks ↗</a></div>
+  <div><p class="eyebrow">OPTIONAL / EXISTING ORIGINAL SELLER</p><h3>15 Circle Base USDC scope review</h3>
+   <p>One independently funded, nonsecret unsigned Permit2/EIP-712 specimen. The original same-owner VM2 Clawlancer seller offers a bounded AI-assisted field-by-field technical review with documented unknowns, subject to order and mutual written scope acceptance. No live contract audit, account access, wallet signing or safety guarantee.</p>
+   <a class="btn primary" href="https://clawlancer.ai/marketplace/26905668-717a-41d7-9cc1-5d7ea1c331b1" target="_blank" rel="noopener noreferrer">View real 15 USDC fixed offer ↗</a>
+   <p class="micro">As of launch, no independent paid customer, USDC payment or testimonial is verified. Published price does not equal realized earnings.</p>
+  </div>
+ </div>
+ <div class="small-feedback"><strong>What is still missing from your wallet's Permit2 signing UI?</strong><p>We prefer criticism and real examples of workflow pain over invented testimonials. Please share only general nonsecret facts.</p><a href="../feedback/" class="btn secondary">Send optional no-login product feedback ↗</a></div>
+</section>
+</main>
+<footer><div class="container foot"><strong>SignScope · 2026</strong><span>Same one human economic owner, AI-assisted public tool</span><span>Zero wallet connection or automatic USDC charge</span></div></footer>
+</body>
+</html>
