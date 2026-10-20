@@ -298,3 +298,47 @@ test("no AI prompt or wallet command hidden inside analyzer",()=>{
  assert.ok(!Object.hasOwn(r,"signedMessage"));
  assert.equal(r.chargedUSDC,"0");
 });
+
+test("EIP712Domain field missing from declared types warns instead of assuming domain signature binding",()=>{
+ const d=permit();delete d.types.EIP712Domain;
+ assert.ok(trace(report(d)).includes("DOMAIN_TYPE_MISSING"));
+});
+test("EIP712Domain chainId without correctly typed field warns",()=>{
+ const d=permit();d.types.EIP712Domain=d.types.EIP712Domain.filter(f=>f.name!=="chainId");
+ assert.ok(trace(report(d)).includes("DOMAIN_FIELD_NOT_DECLARED"));
+});
+test("EIP712Domain verifyingContract wrong declared type warns",()=>{
+ const d=permit();
+ d.types.EIP712Domain.find(f=>f.name==="verifyingContract").type="string";
+ assert.ok(trace(report(d)).includes("DOMAIN_FIELD_NOT_DECLARED"));
+});
+test("EIP2612 purported Permit with false spender Solidity type warns",()=>{
+ const d=permit();d.types.Permit.find(f=>f.name==="spender").type="string";
+ assert.ok(trace(report(d)).includes("TYPE_DECLARATION_MISMATCH"));
+});
+test("Permit2 missing nested detail struct definitions warns",()=>{
+ assert.ok(trace(report(sig)).includes("PERMIT2_DETAILS_TYPE_UNKNOWN"));
+});
+test("Base USDC maxUInt256 presents unlimited label, not astronomical marketing amount",()=>{
+ const d=permit();d.message.value=MAX256.toString();
+ assert.ok(report(d).observed.amounts[0].display.includes("effectively unlimited"));
+});
+test("NFT/ERC20 maxUInt256 calldata reports unlimited rather than huge human token count",()=>{
+ const d=tx("0x095ea7b3",[wordAddr(b),wordVal(MAX256)]);
+ assert.ok(report(d).observed.amountDisplay.includes("effectively unlimited"));
+});
+test("explicit unsure chain selection disables expected Base mismatch but keeps domain observation",()=>{
+ const d=permit();d.domain.chainId=1;
+ const r=inspect(json(d),{expectedChainId:null,nowSeconds:1790000000});
+ assert.equal(r.observed.chainId,1);
+ assert.ok(!trace(r).includes("CHAIN_MISMATCH"));
+});
+
+test("zero EIP2612 owner explicitly warned",()=>{
+ const d=permit();d.message.owner="0x"+"0".repeat(40);
+ assert.ok(trace(report(d)).includes("ZERO_OWNER_ADDRESS"));
+});
+test("zero spender explicitly warned",()=>{
+ const d=permit();d.message.spender="0x"+"0".repeat(40);
+ assert.ok(trace(report(d)).includes("ZERO_SPENDER_ADDRESS"));
+});

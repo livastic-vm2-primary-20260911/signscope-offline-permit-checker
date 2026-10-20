@@ -59,9 +59,11 @@ function amountInfo(value,token,chain,bits=256){
     token:t,
     atomic:n===null?"UNREADABLE":n.toString(),
     display:n===null?"Unreadable amount":
-      (t===BASE_USDC.toLowerCase()&&chain===8453
-        ?formatUnits(n)+" native Circle USDC (Base)"
-        :"Raw token units; decimals NOT verified"),
+      n===(1n<<BigInt(bits))-1n
+        ?"MAX_UINT"+bits+" — effectively unlimited if used as an allowance"
+        :(t===BASE_USDC.toLowerCase()&&chain===8453
+          ?formatUnits(n)+" native Circle USDC (Base)"
+          :"Raw token units; decimals NOT verified"),
     maximum:n!==null&&n===(1n<<BigInt(bits))-1n,
     zero:n===0n
   };
@@ -85,7 +87,7 @@ export function inspectTyped(raw,opts={}){
        typeof d.primaryType==="string"&&d.primaryType.length<=100,
        "Expected EIP-712 types, domain, primaryType, message");
   const primary=d.primaryType,m=d.message,t=d.types,domain=d.domain;
-  const expectedChain=uint(opts.expectedChainId??"8453");
+  const expectedChain=opts.expectedChainId===null?null:uint(opts.expectedChainId??"8453");
   const expectedSpender=addr(opts.expectedSpender);
   const expectedContract=addr(opts.expectedContract);
   const now=Number.isSafeInteger(opts.nowSeconds)?opts.nowSeconds:nowSeconds();
@@ -94,6 +96,17 @@ export function inspectTyped(raw,opts={}){
   };
   const chainU=uint(domain.chainId),chain=chainU!==null&&chainU<1000000000n?Number(chainU):null;
   const verifying=addr(domain.verifyingContract);
+  // EIP-712 domain fields shown in a JSON object are not necessarily
+  // cryptographically bound if omitted from its EIP712Domain type. Warn.
+  const domainType=t.EIP712Domain;
+  if(!Array.isArray(domainType)){
+    add("DOMAIN_TYPE_MISSING","EIP712Domain type declaration was not provided; cannot verify which domain fields are signed.");
+  }else{
+    for(const [key,type] of [["chainId","uint256"],["verifyingContract","address"]]){
+      if(domain[key]!==undefined&&!domainType.some(f=>isObj(f)&&f.name===key&&f.type===type))
+        add("DOMAIN_FIELD_NOT_DECLARED","The "+key+" field is displayed but not declared with its expected EIP712 type.");
+    }
+  }
   if(chain===null)add("CHAIN_MISSING","No valid chainId binds this domain.");
   else if(expectedChain!==null&&chainU!==expectedChain)
     add("CHAIN_MISMATCH","Message chain differs from your expected network.");
@@ -154,6 +167,29 @@ export function inspectTyped(raw,opts={}){
     checkDeadline("signature deadline",m.deadline);
     add("SPENDER_OUTSIDE_SIGNATURE","Permit2 SignatureTransfer spender/recipient can be chosen via calldata not included in signed typed data.");
   }
+  // A matching field name with the wrong declared EIP-712 type is NOT
+  // evidence that a token contract would consume the value as expected.
+  if(recognized){
+    const required={
+      Permit:[["owner","address"],["spender","address"],["value","uint256"],["nonce","uint256"],["deadline","uint256"]],
+      TransferWithAuthorization:[["from","address"],["to","address"],["value","uint256"],["validAfter","uint256"],["validBefore","uint256"],["nonce","bytes32"]],
+      PermitSingle:[["details","PermitDetails"],["spender","address"],["sigDeadline","uint256"]],
+      PermitBatch:[["details","PermitDetails[]"],["spender","address"],["sigDeadline","uint256"]],
+      PermitTransferFrom:[["permitted","TokenPermissions"],["nonce","uint256"],["deadline","uint256"]],
+      PermitBatchTransferFrom:[["permitted","TokenPermissions[]"],["nonce","uint256"],["deadline","uint256"]]
+    };
+    for(const [name,type] of required[primary]||[]){
+      if(!t[primary]?.some(f=>isObj(f)&&f.name===name&&f.type===type))
+        add("TYPE_DECLARATION_MISMATCH","Signed structure "+primary+" has missing/incorrect declared field: "+name+".");
+    }
+    if(primary==="PermitSingle"||primary==="PermitBatch"){
+      const detailTypes=[["token","address"],["amount","uint160"],["expiration","uint48"],["nonce","uint48"]];
+      for(const [name,type] of detailTypes){
+        if(!t.PermitDetails?.some(f=>isObj(f)&&f.name===name&&f.type===type))
+          add("PERMIT2_DETAILS_TYPE_UNKNOWN","Permit2 detail field "+name+" was not declared as "+type+".");
+      }
+    }
+  }
   if(primary.startsWith("Permit")&&primary!=="Permit"&&verifying!==PERMIT2.toLowerCase())
     add("PERMIT2_DOMAIN_MISMATCH","Permit2-shaped message is not bound to canonical Permit2.");
   if(!recognized)add("UNRECOGNIZED_TYPE","Unknown or malformed signing type; no reliable grant semantics.");
@@ -163,6 +199,12 @@ export function inspectTyped(raw,opts={}){
     add("SPENDER_UNKNOWN","Missing/invalid spender in signed message.");
   if(recognized&&primary==="TransferWithAuthorization"&&!recipient)
     add("RECIPIENT_UNKNOWN","Missing/invalid transfer recipient.");
+  if(owner==="0x"+"0".repeat(40))
+    add("ZERO_OWNER_ADDRESS","Signer/owner is the zero address; an EIP-2612 Permit should reject this.");
+  if(spender==="0x"+"0".repeat(40))
+    add("ZERO_SPENDER_ADDRESS","Spender is the zero address; verify whether this is a deliberate revocation or malformed request.");
+  if(recipient==="0x"+"0".repeat(40))
+    add("ZERO_RECIPIENT_ADDRESS","Recipient is the zero address; a real transfer could be burned or rejected.");
   if(expectedSpender&&spender!==expectedSpender)
     add("EXPECTED_SPENDER_MISMATCH","Expected spender differs from the signed scope or is unavailable.");
   if(amounts.length===0)add("AMOUNT_UNKNOWN","No recognized token authorization amount displayed.");
@@ -201,7 +243,7 @@ export function inspectCall(raw,opts={}){
   if(["ERC20_APPROVE","NFT_APPROVAL_FOR_ALL"].includes(action)&&!spender)
     add("SPENDER_INVALID","Approval spender missing or invalid.");
   const chainU=uint(d.chainId),chain=chainU!==null&&chainU<1000000n?Number(chainU):null;
-  const expectedChain=uint(opts.expectedChainId??"8453");
+  const expectedChain=opts.expectedChainId===null?null:uint(opts.expectedChainId??"8453");
   if(chain===null)add("CHAIN_MISSING","Transaction does not specify chain.");
   else if(expectedChain!==null&&chainU!==expectedChain)add("CHAIN_MISMATCH","Unexpected network.");
   const contract=addr(d.to),expectedContract=addr(opts.expectedContract);

@@ -1,7 +1,7 @@
 import {
   inspect, BASE_USDC, PERMIT2, MAX160,
   SAMPLE_PERMIT, SAMPLE_APPROVE
-} from "./analysis.mjs";
+} from "./analysis.mjs?v=20261020-typecheck";
 
 const $ = id => document.getElementById(id);
 const input=$("input-json");

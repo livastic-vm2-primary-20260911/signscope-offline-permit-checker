@@ -74,7 +74,7 @@ Requires Node >=20. No npm dependencies or wallets.
     npm test
     npm run check
 
-The source is MIT. The unit suite covers chain, domain, spender, amount,
+The source is MIT. The current 87 passing offline tests include privacy and payment-request constraints. The unit suite covers chain, domain, spender, amount,
 Permit2 maxUint160, EIP3009 deadline and the known static ABI selectors.
 There are no hosted billing or account credentials to install.
 
